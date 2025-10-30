@@ -3,7 +3,8 @@ node_modules/
 
 # Build output
 dist/
-*.js
+# jest config
+jest.config.js
 *.js.map
 *.d.ts
 *.d.ts.map
