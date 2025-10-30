@@ -1,2 +1,25 @@
 #!/usr/bin/env node
-require('../dist/index.js');
+const path = require('path');
+const fs = require('fs');
+
+// 查找package.json文件以确定项目根目录
+function findPackageRoot(startDir) {
+  let currentDir = startDir;
+  while (currentDir !== path.parse(currentDir).root) {
+    const packagePath = path.join(currentDir, 'package.json');
+    if (fs.existsSync(packagePath)) {
+      return currentDir;
+    }
+    currentDir = path.dirname(currentDir);
+  }
+  // 如果找不到package.json，则使用默认方式
+  return path.resolve(__dirname, '..');
+}
+
+// 获取项目根目录
+const packageRoot = findPackageRoot(__dirname);
+// 基于项目根目录定位dist/index.js文件
+const distPath = path.join(packageRoot, 'dist', 'index.js');
+
+// 加载主模块
+require(distPath);

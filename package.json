@@ -1,6 +1,6 @@
 {
   "name": "exif-dog",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A CLI tool for EXIF data",
   "main": "dist/index.js",
   "bin": {
