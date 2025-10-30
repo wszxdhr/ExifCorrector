@@ -1,0 +1,56 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+        
+    - name: Install dependencies
+      run: |
+        if [ -f yarn.lock ]; then
+          yarn install --frozen-lockfile
+        elif [ -f package-lock.json ]; then
+          npm ci
+        else
+          npm install
+        fi
+        
+    - name: Run tests
+      run: |
+        if [ -f yarn.lock ]; then
+          yarn test
+        else
+          npm test
+        fi
+        
+    - name: Build project
+      run: |
+        if [ -f yarn.lock ]; then
+          yarn build
+        elif [ -f package.json ]; then
+          npm run build
+        fi
+        
+    - name: Publish to NPM
+      run: |
+        if [ -f yarn.lock ]; then
+          yarn publish --access public
+        else
+          npm publish --access public
+        fi
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
