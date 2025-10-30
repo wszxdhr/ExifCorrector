@@ -1,6 +1,6 @@
 {
   "name": "exif-dog",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A CLI tool for EXIF data",
   "main": "dist/index.js",
   "bin": {
@@ -34,9 +34,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@opensubtitles/video-metadata-extractor": "^1.8.1",
     "commander": "^11.1.0",
-    "exifreader": "^4.32.0",
     "exiftool-vendored": "^31.2.0",
     "inquirer": "^12.10.0",
     "moment": "^2.30.1",

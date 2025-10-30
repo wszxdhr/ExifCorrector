@@ -4,21 +4,23 @@ on:
   push:
     branches:
       - master
+      - dev
+      - beta
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '21'
         registry-url: 'https://registry.npmjs.org'
-        
+
     - name: Install dependencies
       run: |
         if [ -f yarn.lock ]; then
@@ -28,7 +30,7 @@ jobs:
         else
           npm install
         fi
-        
+
     - name: Run tests
       run: |
         if [ -f yarn.lock ]; then
@@ -36,7 +38,7 @@ jobs:
         else
           npm test
         fi
-        
+
     - name: Build project
       run: |
         if [ -f yarn.lock ]; then
@@ -44,13 +46,36 @@ jobs:
         elif [ -f package.json ]; then
           npm run build
         fi
-        
-    - name: Publish to NPM
+
+    - name: Publish to NPM (master)
+      if: github.ref == 'refs/heads/master'
       run: |
         if [ -f yarn.lock ]; then
           yarn publish --access public
         else
           npm publish --access public
+        fi
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Publish to NPM (dev)
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        if [ -f yarn.lock ]; then
+          yarn publish --access public --tag dev
+        else
+          npm publish --access public --tag dev
+        fi
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Publish to NPM (beta)
+      if: github.ref == 'refs/heads/beta'
+      run: |
+        if [ -f yarn.lock ]; then
+          yarn publish --access public --tag beta
+        else
+          npm publish --access public --tag beta
         fi
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
