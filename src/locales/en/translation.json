@@ -1,0 +1,83 @@
+{
+  "app": {
+    "name": "ExifDog",
+    "description": "A tool for EXIF data in images"
+  },
+  "cli": {
+    "help": {
+      "description": "EXIF data in images",
+      "usage": "Usage: exif-dog [options] <input-file> [output-file]",
+      "options": {
+        "help": "Show help",
+        "version": "Show version number",
+        "rotate": "Auto-rotate based on EXIF orientation",
+        "remove": "Remove EXIF data",
+        "backup": "Create backup of original file",
+        "imageDatetime": "Compare image datetime by filename and EXIF data",
+        "output": "Output file path",
+        "language": "Set language (en|zh)",
+        "ext": "Specify file extensions (comma-separated)",
+        "granularity": "Specify datetime granularity (second|minute|hour|day|month|year)",
+        "compareBase": "Datetime value comparison base, please use exif-dog view command to view available values",
+        "compare": "Datetime value to compare, please use exif-dog view command to view available values",
+        "fileNameFormat": "When compareBase=FileName, use this format to read datetime from filename, please refer to moment.js",
+        "recursive": "Recursively query files",
+        "yes": "Directly execute all modifications without confirmation"
+      }
+    },
+    "error": {
+      "noInputFile": "Please provide an input file",
+      "fileNotFound": "Input file not found: {{file}}",
+      "invalidFile": "Invalid image file: {{file}}",
+      "processingError": "Error processing file: {{error}}",
+      "unsupportedFormat": "Unsupported image format: {{format}}"
+    },
+    "success": {
+      "fileProcessed": "File processed successfully: {{file}}",
+      "backupCreated": "Backup created: {{file}}",
+      "exifRemoved": "EXIF data removed from: {{file}}",
+      "rotationApplied": "Rotation applied to: {{file}}"
+    },
+    "info": {
+      "processing": "Processing file: {{file}}",
+      "detectedOrientation": "Detected orientation: {{orientation}}",
+      "fileSize": "File size: {{size}} bytes",
+      "filesFound": "Found {{count}} files",
+      "executing": "Executing operation...",
+      "cancelled": "Cancelled",
+      "languageChanged": "Language changed to: {{language}}",
+      "scanningFiles": "Scanning files",
+      "fileName": "File Name",
+      "datetime": "Datetime",
+      "base": "Base",
+      "current": "Current",
+      "startScanAgain": "Start scan again...",
+      "modifyingFiles": "Modifying files..."
+    },
+    "confirm": {
+      "continue": "Do you want to continue?",
+      "choice": "Please select an action:",
+      "confirm": "Confirm",
+      "modifyAll": "Modify all",
+      "ignoreFiles": "Ignore files",
+      "ignoreAll": "Ignore all",
+      "scanAgain": "Scan again",
+      "cancel": "Cancel"
+    },
+    "imageDatetime": {
+      "afterScanInfo": "Scanning completed, found {{count}} files, {{matchedCount}} files datetime not match",
+      "noMatchedFiles": "Scanning completed, found {{count}} files, no files datetime not match"
+    }
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information",
+    "success": "Success",
+    "goodbye": "Thanks for using, goodbye!"
+  }
+}
