@@ -1,11 +1,17 @@
 {
   "name": "exif-dog",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A CLI tool for EXIF data",
   "main": "dist/index.js",
   "bin": {
     "exif-dog": "./bin/exif-dog"
   },
+  "files": [
+    "dist/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc && node scripts/copy-locales.js",
     "dev": "ts-node src/index.ts",
