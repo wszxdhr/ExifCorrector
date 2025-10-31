@@ -40,7 +40,6 @@ export function scanFolder(folderPath: string, ext?: string[], recursive?: boole
                     }
                     filePaths.push(filePath);
                 } else if (fs.statSync(filePath).isDirectory() && recursive) {
-                    devError('??', fs.statSync(filePath).isDirectory() && recursive)
                     filePaths.push(...(await scanFolder(filePath, ext, recursive, progress)));
                 }
             }
