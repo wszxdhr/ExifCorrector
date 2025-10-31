@@ -28,6 +28,12 @@ class ExifDog {
       .version(version)
 
     this.program
+      .option('-v, --version')
+      .action(() => {
+        console.log(version);
+        process.exit(0);
+      })
+    this.program
       .command('image-datetime <folder>')
       .description(t('cli.help.options.imageDatetime'))
       .option('-b, --compare-base <base>', t('cli.help.options.compareBase'))

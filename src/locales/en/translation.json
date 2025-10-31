@@ -52,7 +52,8 @@
       "base": "Base",
       "current": "Current",
       "startScanAgain": "Start scan again...",
-      "modifyingFiles": "Modifying files..."
+      "modifyingFiles": "Modifying files...",
+      "localTimeZone": "Note: Current time zone is {{timeZone}}"
     },
     "confirm": {
       "continue": "Do you want to continue?",
@@ -78,6 +79,7 @@
     "warning": "Warning",
     "info": "Information",
     "success": "Success",
-    "goodbye": "Thanks for using, goodbye!"
+    "goodbye": "Thanks for using, goodbye!",
+    "modifySuccess": "Successfully modified {{count}} files"
   }
 }

@@ -1,4 +1,4 @@
-import { exiftool } from 'exiftool-vendored'
+import { exiftool, Tags } from 'exiftool-vendored'
 
 /**
  * 获取图片的exif信息
@@ -9,7 +9,7 @@ export async function getExif(filePath: string) {
     return exiftool.read(filePath)
 }
 
-export async function setExif(filePath: string, exif: Object) {
+export async function setExif(filePath: string, exif: Tags) {
     return exiftool.write(filePath, exif, {
         writeArgs: ['-overwrite_original']
     })

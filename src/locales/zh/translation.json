@@ -52,7 +52,8 @@
       "base": "基准",
       "current": "当前",
       "startScanAgain": "开始重新扫描...",
-      "modifyingFiles": "正在修改文件..."
+      "modifyingFiles": "正在修改文件...",
+      "localTimeZone": "请注意当前时区："
     },
     "confirm": {
       "continue": "是否继续？",
@@ -78,6 +79,7 @@
     "warning": "警告",
     "info": "信息",
     "success": "成功",
-    "goodbye": "谢谢使用，再见！"
+    "goodbye": "谢谢使用，再见！",
+    "modifySuccess": "已成功修改 {{count}} 个文件"
   }
 }
