@@ -53,7 +53,7 @@
       "current": "当前",
       "startScanAgain": "开始重新扫描...",
       "modifyingFiles": "正在修改文件...",
-      "localTimeZone": "请注意当前时区："
+      "localTimeZone": "请注意当前时区：{{timeZone}}"
     },
     "confirm": {
       "continue": "是否继续？",
@@ -66,7 +66,7 @@
       "cancel": "取消"
     },
     "imageDatetime": {
-      "afterScanInfo": "扫描完成，共发现 {{count}} 个文件，其中 {{matchedCount}} 个文件日期时间不匹配",
+      "afterScanInfo": "扫描完成，共发现 {{count}} 个文件，其中 {{matchedCount}} 个文件日期时间不匹配，耗时 {{time}} 秒",
       "noMatchedFiles": "扫描完成，共发现 {{count}} 个文件，没有发现日期时间不匹配的文件"
     }
   },

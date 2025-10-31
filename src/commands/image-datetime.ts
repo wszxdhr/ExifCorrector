@@ -27,6 +27,7 @@ export async function processImageDatetime(filePath: string, options: {
     options.compareBase = options.compareBase || 'FileName'
     options.compare = options.compare || ['CreateDate']
     devLog(`option: ${JSON.stringify(options)}`)
+    const startTime = Date.now()
     const fileNameReg = datetimeFormatToReg(options.fileNameFormat || exifDatetimeMap[options.compareBase])
     const spinner = ora(t('cli.info.scanningFiles')).start();
     let count = 0
@@ -63,7 +64,7 @@ export async function processImageDatetime(filePath: string, options: {
         process.exit(0)
         return
     }
-    console.log(t('cli.imageDatetime.afterScanInfo', { count: filePaths.length, matchedCount: table.length }))
+    console.log(t('cli.imageDatetime.afterScanInfo', { count: filePaths.length, matchedCount: table.length, time: (Date.now() - startTime) / 1000 }))
 
     if (options.yes) {
         await modifyAll(files, options)
@@ -109,6 +110,7 @@ async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Mom
     await Promise.all(files.map(async ({ filePath, exif, base, current }) => {
         if (base && current) {
             for (const compare of options.compare) {
+                spinner.text = t('cli.info.processing', { file: filePath }) + `: ${compare}`
                 await modifyDatetime(filePath, exif, base, compare)
             }
         }

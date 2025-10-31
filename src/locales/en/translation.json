@@ -66,7 +66,7 @@
       "cancel": "Cancel"
     },
     "imageDatetime": {
-      "afterScanInfo": "Scanning completed, found {{count}} files, {{matchedCount}} files datetime not match",
+      "afterScanInfo": "Scanning completed, found {{count}} files, {{matchedCount}} files datetime not match, time taken: {{time}} seconds",
       "noMatchedFiles": "Scanning completed, found {{count}} files, no files datetime not match"
     }
   },
