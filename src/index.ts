@@ -33,11 +33,11 @@ class ExifDog {
       .option('-b, --compare-base <base>', t('cli.help.options.compareBase'))
       .option('-e, --ext <ext>', t('cli.help.options.ext'), (val: string) => val.split(','))
       .option('-g, --granularity <granularity>', t('cli.help.options.granularity'), 'second')
-      .option('-c, --compare <compare>', t('cli.help.options.compare'), 'CreateDate')
+      .option('-c, --compare <compare>', t('cli.help.options.compare'), (val: string) => val.split(','))
       .option('-f, --file-name-format <fileNameFormat>', t('cli.help.options.fileNameFormat'))
-      .option('-r, --recursive', t('cli.help.options.recursive'), 'false')
-      .option('-y, --yes', t('cli.help.options.yes'), 'false')
-      .action(async (folder: string, options: { compareBase: keyof typeof exifDatetimeMap, ext: string[], granularity: unitOfTime.StartOf, compare: keyof typeof exifDatetimeMap, fileNameFormat: string | undefined, recursive: boolean, yes: boolean }) => {
+      .option('-r, --recursive', t('cli.help.options.recursive'))
+      .option('-y, --yes', t('cli.help.options.yes'))
+      .action(async (folder: string, options: { compareBase: keyof typeof exifDatetimeMap, ext: string[], granularity: unitOfTime.StartOf, compare: (keyof typeof exifDatetimeMap)[], fileNameFormat: string | undefined, recursive: boolean, yes: boolean }) => {
         await processImageDatetime(folder, options);
       })
   }

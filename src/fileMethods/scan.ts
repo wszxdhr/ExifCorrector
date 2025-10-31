@@ -1,7 +1,7 @@
 // 扫描指定文件夹里面的文件
 import * as fs from 'fs';
 import * as path from 'path';
-import { devLog } from '../utils/devLog';
+import { devError, devInfo, devLog } from '../utils/devLog';
 
 export function scan(p: string) {
     if (fs.statSync(p).isFile()) {
@@ -34,12 +34,13 @@ export function scanFolder(folderPath: string, ext?: string[], recursive?: boole
                 const filePath = path.join(folderPath, file)
                 const currentExt = path.extname(file).toLowerCase().replace('.', '');
                 if (fs.statSync(filePath).isFile()) {
-                    progress?.(filePath)
+                    progress?.(filePath);
                     if (lowerExt && lowerExt.length > 0 && !lowerExt.find(e => (currentExt === e))) {
                         continue
                     }
                     filePaths.push(filePath);
                 } else if (fs.statSync(filePath).isDirectory() && recursive) {
+                    devError('??', fs.statSync(filePath).isDirectory() && recursive)
                     filePaths.push(...(await scanFolder(filePath, ext, recursive, progress)));
                 }
             }

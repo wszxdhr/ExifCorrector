@@ -46,7 +46,7 @@
       "executing": "执行操作...",
       "cancelled": "已取消",
       "languageChanged": "语言已切换为: {{language}}",
-      "scanningFiles": "正在扫描文件",
+      "scanningFiles": "正在扫描文件，已扫描 {{count}} 个文件",
       "fileName": "文件名",
       "datetime": "日期时间",
       "base": "基准",

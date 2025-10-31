@@ -18,18 +18,19 @@ export async function processImageDatetime(filePath: string, options: {
     ext: string[],
     granularity: unitOfTime.StartOf,
     // 可能是'YYYYMMDDHHmmss'这种，或者'exif.DateTime'
-    compare: keyof typeof exifDatetimeMap,
+    compare: (keyof typeof exifDatetimeMap)[],
     fileNameFormat: string | undefined,
     recursive?: boolean,
     yes?: boolean
 }) {
     options.compareBase = options.compareBase || 'FileName'
-    options.compare = options.compare || 'CreateDate'
+    options.compare = options.compare || ['CreateDate']
     devLog(`option: ${JSON.stringify(options)}`)
     const fileNameReg = datetimeFormatToReg(options.fileNameFormat || exifDatetimeMap[options.compareBase])
     const spinner = ora(t('cli.info.scanningFiles')).start();
+    let count = 0
     const filePaths = await scanFolder(filePath, options.ext, options.recursive, (filePath) => {
-        spinner.text = t('cli.info.scanningFiles') + `: ${filePath}`
+        spinner.text = t('cli.info.scanningFiles', { count: ++count }) + `: ${filePath}`
     });
     spinner.stop();
     const table: { [key: string]: string }[] = []
@@ -41,7 +42,7 @@ export async function processImageDatetime(filePath: string, options: {
         }
         const exif = await getExif(filePath)
         const compareDatetime = compareOptionToDatetime(options.compare, exif)
-        const baseDatetime = compareOptionToDatetime(options.compareBase, exif, options.compareBase === 'FileName' ? options.fileNameFormat : undefined)
+        const baseDatetime = compareOptionToDatetime([options.compareBase], exif, options.compareBase === 'FileName' ? options.fileNameFormat : undefined)
         devLog(filePath, compareDatetime, baseDatetime)
 
         if (!compareDatetime || !baseDatetime || !compareDatetime.isValid() || !baseDatetime.isValid() || compareDatetime.isSame(baseDatetime, options.granularity || 'second')) {
@@ -101,11 +102,13 @@ export async function processImageDatetime(filePath: string, options: {
     }
 }
 
-async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Moment | null, current: moment.Moment | null }[], options: { compare: keyof typeof exifDatetimeMap }) {
+async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Moment | null, current: moment.Moment | null }[], options: { compare: (keyof typeof exifDatetimeMap)[] }) {
     const spinner = ora(t('cli.info.modifyingFiles')).start();
     await Promise.all(files.map(async ({ filePath, exif, base, current }) => {
         if (base && current) {
-            await modifyDatetime(filePath, exif, base, options.compare || 'CreateDate')
+            for (const compare of options.compare) {
+                await modifyDatetime(filePath, exif, current, compare)
+            }
         }
     }))
     spinner.stop();

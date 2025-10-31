@@ -26,10 +26,16 @@ export function exifDateTimeToMoment(exifDateTime: ExifDateTime, exifDateTimeFor
     return moment(datetime)
 }
 
-export function compareOptionToDatetime(compareOption: keyof typeof exifDatetimeMap, exif: Tags, format?: string) {
+export function compareOptionToDatetime(compareOption: (keyof typeof exifDatetimeMap)[], exif: Tags, format?: string) {
     devLog(`正在从${exif.FileName} 的Exif中获取时间，比较选项：${compareOption}`)
-    const value = exif[compareOption]
-    const _format = format || exifDatetimeMap[compareOption]
+    const validKey = compareOption.find(option => exif[option])
+    if (!validKey) {
+        devError('获取失败，Exif中没有任何一个时间选项有效', compareOption)
+        return null
+    }
+
+    const value = exif[validKey]
+    const _format = format || exifDatetimeMap[validKey]
     if (!value || value === '' || !_format) {
         devError('获取失败，Exif值为空或格式为空 ', 'value: ', value, 'format: ', _format)
         return null

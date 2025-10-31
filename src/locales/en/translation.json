@@ -46,7 +46,7 @@
       "executing": "Executing operation...",
       "cancelled": "Cancelled",
       "languageChanged": "Language changed to: {{language}}",
-      "scanningFiles": "Scanning files",
+      "scanningFiles": "Scanning files, processed {{count}} files",
       "fileName": "File Name",
       "datetime": "Datetime",
       "base": "Base",
