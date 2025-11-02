@@ -1,59 +1,32 @@
 // 通过文件名比较图片的创建时间
 import moment from 'moment-timezone';
 import { ExifDateTime, Tags } from 'exiftool-vendored'
-import { devError, devLog } from '../../utils/devLog';
+import { devError, devInfo } from '../../utils/devLog';
+import { parseDate } from 'chrono-node'
 import { datetimeFormatToReg } from '../../utils/datetimeFormatToReg';
 
 export const localTimeZone = moment.tz.guess()
 
 export const displayDatetimeFormat = 'YYYY-MM-DD HH:mm:ss'
 
-export const exifDatetimeMap = {
-    CreateDate: 'YYYY:MM:DD HH:mm:ss',
-    FileAccessDate: 'YYYY:MM:DD HH:mm:ss',
-    FileInodeChangeDate: 'YYYY:MM:DD HH:mm:ss',
-    FileModifyDate: 'YYYY:MM:DD HH:mm:ss',
-    FileName: 'YYYY-MM-DD HH:mm:ss',
-    MediaCreateDate: 'YYYY:MM:DD HH:mm:ss',
-    MediaModifyDate: 'YYYY:MM:DD HH:mm:ss',
-    ModifyDate: 'YYYY:MM:DD HH:mm:ss',
-    TrackCreateDate: 'YYYY:MM:DD HH:mm:ss',
-    TrackModifyDate: 'YYYY:MM:DD HH:mm:ss',
-} as const
-
 export function exifDateTimeToMoment(exifDateTime: ExifDateTime, exifDateTimeFormat: string) {
     const datetime = exifDateTime.toDateTime().toJSDate()
     return moment(datetime)
 }
 
-export function compareOptionToDatetime(compareOption: (keyof typeof exifDatetimeMap)[], exif: Tags, format?: string) {
-    devLog(`正在从${exif.FileName} 的Exif中获取时间，比较选项：${compareOption}`)
-    const validKey = compareOption.find(option => exif[option])
-    if (!validKey) {
-        devError('获取失败，Exif中没有任何一个时间选项有效', compareOption)
+export function compareOptionToDatetime(compareOptions: string[], exif: Tags, fileNameFormat: string = 'YYYYMMDDHHmmss') {
+    const dateTimeKey = compareOptions.find(option => option === 'FileName' || exif[option as keyof Tags] instanceof ExifDateTime)
+    if (!dateTimeKey) {
+        devError('获取失败，Exif中没有任何一个时间选项有效', compareOptions)
         return null
     }
-
-    const value = exif[validKey]
-    const _format = format || exifDatetimeMap[validKey]
-    if (!value || value === '' || !_format) {
-        devError('获取失败，Exif值为空或格式为空 ', 'value: ', value, 'format: ', _format)
+    const fileName = exif.FileName?.toString() || ''
+    const dateTimeFromFileName = moment(fileName.match(datetimeFormatToReg(fileNameFormat))?.[0] || '', fileNameFormat)
+    const value = parseDate(dateTimeKey === 'FileName' && dateTimeFromFileName.isValid() ? dateTimeFromFileName.format(displayDatetimeFormat) : exif[dateTimeKey as keyof Tags]?.toString() || '')
+    devInfo(value, exif[dateTimeKey as keyof Tags]?.toString())
+    if (!value) {
+        devError('获取失败，Exif值为空或格式为空 ', 'compareOptions: ', compareOptions, 'value: ', value, 'dateTimeFromFileName: ', dateTimeFromFileName)
         return null
     }
-    if (value instanceof ExifDateTime) {
-        devLog('Exif value is ExifDateTime', value.toDateTime().toFormat('yyyyMMDDHHmmss'))
-        return exifDateTimeToMoment(value, _format)
-    }
-    if (typeof value === 'string') {
-        devLog('Exif value is string', value)
-        // 先匹配
-        const timeString = datetimeFormatToReg(_format).exec(value)
-        if (timeString) {
-            devLog('通过正则处理后的时间字符串：', timeString[0])
-            return moment.tz(timeString[0], _format, localTimeZone)
-        }
-        devError('Exif value string not match format', value, _format)
-    }
-    devError('获取失败')
-    return null
+    return moment(value)
 }

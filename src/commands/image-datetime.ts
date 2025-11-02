@@ -1,11 +1,10 @@
 import inquirer from 'inquirer'
-import { devInfo, devLog } from '../utils/devLog';
+import { devLog } from '../utils/devLog';
 import { scanFolder } from '../fileMethods/scan';
 import { t } from '../i18n/config';
 import ora from 'ora'
 import path from 'path';
-import { compareOptionToDatetime, displayDatetimeFormat, exifDatetimeMap, localTimeZone } from '../fileMethods/image/compareDatetimeByFileName';
-import { datetimeFormatToReg } from '../utils/datetimeFormatToReg';
+import { compareOptionToDatetime, displayDatetimeFormat, localTimeZone } from '../fileMethods/image/compareDatetimeByFileName';
 import { getExif, setExif } from '../fileMethods/image/getExif';
 import { unitOfTime } from 'moment-timezone'
 import { ExifDateTime, Tags } from 'exiftool-vendored';
@@ -14,24 +13,24 @@ import chalk from 'chalk';
 
 // 处理图片日期
 export async function processImageDatetime(filePath: string, options: {
-    compareBase: keyof typeof exifDatetimeMap,
+    compareBase: string,
     ext: string[],
     granularity: unitOfTime.StartOf,
     // 可能是'YYYYMMDDHHmmss'这种，或者'exif.DateTime'
-    compare: (keyof typeof exifDatetimeMap)[],
+    compare: string[],
     fileNameFormat: string | undefined,
     recursive?: boolean,
-    yes?: boolean
+    yes?: boolean,
+    filter?: string
 }) {
     console.log(chalk.bgRedBright.blueBright(t('cli.info.localTimeZone', { timeZone: localTimeZone })))
     options.compareBase = options.compareBase || 'FileName'
     options.compare = options.compare || ['CreateDate']
     devLog(`option: ${JSON.stringify(options)}`)
     const startTime = Date.now()
-    const fileNameReg = datetimeFormatToReg(options.fileNameFormat || exifDatetimeMap[options.compareBase])
     const spinner = ora(t('cli.info.scanningFiles')).start();
     let count = 0
-    const filePaths = await scanFolder(filePath, options.ext, options.recursive, (filePath) => {
+    const filePaths = await scanFolder(filePath, options.filter, options.recursive, (filePath) => {
         spinner.text = t('cli.info.scanningFiles', { count: ++count }) + `: ${filePath}`
     });
     spinner.stop();
@@ -40,12 +39,9 @@ export async function processImageDatetime(filePath: string, options: {
     const files: { filePath: string, exif: Object, base: moment.Moment | null, current: moment.Moment | null }[] = []
     await Promise.all(filePaths.map(async (filePath) => {
         const basename = path.basename(filePath)
-        if (!basename.match(fileNameReg)) {
-            return
-        }
         const exif = await getExif(filePath)
         const compareDatetime = compareOptionToDatetime(options.compare, exif)
-        const baseDatetime = compareOptionToDatetime([options.compareBase], exif, options.compareBase === 'FileName' ? options.fileNameFormat : undefined)
+        const baseDatetime = compareOptionToDatetime([options.compareBase], exif)
         devLog(filePath, compareDatetime, baseDatetime)
 
         if (!compareDatetime || !baseDatetime || !compareDatetime.isValid() || !baseDatetime.isValid() || compareDatetime.isSame(baseDatetime, options.granularity || 'second')) {
@@ -105,7 +101,7 @@ export async function processImageDatetime(filePath: string, options: {
     }
 }
 
-async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Moment | null, current: moment.Moment | null }[], options: { compare: (keyof typeof exifDatetimeMap)[] }) {
+async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Moment | null, current: moment.Moment | null }[], options: { compare: string[] }) {
     const spinner = ora(t('cli.info.modifyingFiles')).start();
     await Promise.all(files.map(async ({ filePath, exif, base, current }) => {
         if (base && current) {
@@ -122,8 +118,8 @@ async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Mom
 }
 
 // warning: 这里会对exif产生副作用
-async function modifyDatetime(filePath: string, exif: Tags, datetime: moment.Moment, compare: keyof typeof exifDatetimeMap) {
-    const compareItem = exif[compare]
+async function modifyDatetime(filePath: string, exif: Tags, datetime: moment.Moment, compare: string) {
+    const compareItem = exif[compare as keyof Tags]
     const newCompareDatetime = DateTime.fromJSDate(datetime.clone().utc().toDate())
     if (compareItem instanceof ExifDateTime) {
         // 这个一定要使用UTC

@@ -1,4 +1,8 @@
-import { exiftool, Tags } from 'exiftool-vendored'
+import { ExifTool, Tags } from 'exiftool-vendored'
+
+const exiftool = new ExifTool({
+    taskTimeoutMillis: 60000
+})
 
 /**
  * 获取图片的exif信息

@@ -22,7 +22,11 @@
         "compare": "Datetime value to compare, please use exif-dog view command to view available values",
         "fileNameFormat": "When compareBase=FileName, use this format to read datetime from filename, please refer to moment.js",
         "recursive": "Recursively query files",
-        "yes": "Directly execute all modifications without confirmation"
+        "yes": "Directly execute all modifications without confirmation",
+        "filter": "File filter string",
+        "list": "List files",
+        "cat": "Show EXIF data of file",
+        "keys": "Show which EXIF keys"
       }
     },
     "error": {
@@ -30,7 +34,8 @@
       "fileNotFound": "Input file not found: {{file}}",
       "invalidFile": "Invalid image file: {{file}}",
       "processingError": "Error processing file: {{error}}",
-      "unsupportedFormat": "Unsupported image format: {{format}}"
+      "unsupportedFormat": "Unsupported image format: {{format}}",
+      "unknownFilter": "Unknown file filter: {{filter}}"
     },
     "success": {
       "fileProcessed": "File processed successfully: {{file}}",
@@ -68,6 +73,9 @@
     "imageDatetime": {
       "afterScanInfo": "Scanning completed, found {{count}} files, {{matchedCount}} files datetime not match, time taken: {{time}} seconds",
       "noMatchedFiles": "Scanning completed, found {{count}} files, no files datetime not match"
+    },
+    "cat": {
+      "fileNameOfExif": "EXIF data of file {{fileName}}:"
     }
   },
   "common": {

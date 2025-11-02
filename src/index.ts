@@ -4,8 +4,9 @@ import { Command } from 'commander';
 import { version } from '../package.json';
 import { processImageDatetime } from './commands/image-datetime';
 import { i18n, t } from './i18n/config';
-import { exifDatetimeMap } from './fileMethods/image/compareDatetimeByFileName';
 import { unitOfTime } from 'moment-timezone';
+import { listFiles } from './commands/list';
+import { catFiles } from './commands/cat';
 
 /**
  * 主命令行程序类
@@ -40,11 +41,29 @@ class ExifDog {
       .option('-e, --ext <ext>', t('cli.help.options.ext'), (val: string) => val.split(','))
       .option('-g, --granularity <granularity>', t('cli.help.options.granularity'), 'second')
       .option('-c, --compare <compare>', t('cli.help.options.compare'), (val: string) => val.split(','))
-      .option('-f, --file-name-format <fileNameFormat>', t('cli.help.options.fileNameFormat'))
+      .option('-ff, --file-name-format <fileNameFormat>', t('cli.help.options.fileNameFormat'))
       .option('-r, --recursive', t('cli.help.options.recursive'))
       .option('-y, --yes', t('cli.help.options.yes'))
-      .action(async (folder: string, options: { compareBase: keyof typeof exifDatetimeMap, ext: string[], granularity: unitOfTime.StartOf, compare: (keyof typeof exifDatetimeMap)[], fileNameFormat: string | undefined, recursive: boolean, yes: boolean }) => {
+      .option('-f, --filter <filter>', t('cli.help.options.filter'), '')
+      .action(async (folder: string, options: { compareBase: string, ext: string[], granularity: unitOfTime.StartOf, compare: string[], fileNameFormat: string | undefined, recursive: boolean, yes: boolean, filter: string }) => {
         await processImageDatetime(folder, options);
+      })
+    this.program
+      .command('list <folder>')
+      .description(t('cli.help.options.list'))
+      .option('-f, --filter <filter>', t('cli.help.options.filter'), '')
+      .option('-r, --recursive', t('cli.help.options.recursive'))
+      .action(async (folder: string, options: { filter: string, recursive: boolean }) => {
+        await listFiles(folder, options.filter, options.recursive);
+      })
+    this.program
+      .command('cat <folder>')
+      .description(t('cli.help.options.cat'))
+      .option('-f, --filter <filter>', t('cli.help.options.filter'), '')
+      .option('-r, --recursive', t('cli.help.options.recursive'))
+      .option('-k, --keys <keys>', t('cli.help.options.keys'), (val: string) => val.split(','))
+      .action(async (folder: string, options: { filter: string, recursive: boolean, keys?: string[] }) => {
+        await catFiles(folder, options.filter, options.recursive, options.keys);
       })
   }
 

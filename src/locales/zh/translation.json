@@ -22,7 +22,11 @@
         "compare": "用来比较的时间值，具体可用值请使用exif-dog view命令查看",
         "fileNameFormat": "当compareBase=FileName时使用，用来读取文件名上带的时间，格式参考moment.js",
         "recursive": "是否递归查询文件",
-        "yes": "是否直接无需确认执行全部修改"
+        "yes": "是否直接无需确认执行全部修改",
+        "filter": "文件过滤字符串",
+        "list": "列出所有文件",
+        "cat": "显示文件的EXIF数据",
+        "keys": "显示哪些EXIF键"
       }
     },
     "error": {
@@ -30,7 +34,8 @@
       "fileNotFound": "找不到输入文件: {{file}}",
       "invalidFile": "无效的图片文件: {{file}}",
       "processingError": "处理文件时出错: {{error}}",
-      "unsupportedFormat": "不支持的图片格式: {{format}}"
+      "unsupportedFormat": "不支持的图片格式: {{format}}",
+      "unknownFilter": "未知的文件过滤条件: {{filter}}"
     },
     "success": {
       "fileProcessed": "文件处理成功: {{file}}",
@@ -68,6 +73,9 @@
     "imageDatetime": {
       "afterScanInfo": "扫描完成，共发现 {{count}} 个文件，其中 {{matchedCount}} 个文件日期时间不匹配，耗时 {{time}} 秒",
       "noMatchedFiles": "扫描完成，共发现 {{count}} 个文件，没有发现日期时间不匹配的文件"
+    },
+    "cat": {
+      "fileNameOfExif": "文件 {{fileName}} 的EXIF数据如下："
     }
   },
   "common": {
