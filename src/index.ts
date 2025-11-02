@@ -38,7 +38,6 @@ class ExifDog {
       .command('image-datetime <folder>')
       .description(t('cli.help.options.imageDatetime'))
       .option('-b, --compare-base <base>', t('cli.help.options.compareBase'))
-      .option('-e, --ext <ext>', t('cli.help.options.ext'), (val: string) => val.split(','))
       .option('-g, --granularity <granularity>', t('cli.help.options.granularity'), 'second')
       .option('-c, --compare <compare>', t('cli.help.options.compare'), (val: string) => val.split(','))
       .option('-ff, --file-name-format <fileNameFormat>', t('cli.help.options.fileNameFormat'))
