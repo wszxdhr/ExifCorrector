@@ -26,7 +26,9 @@
         "filter": "File filter string",
         "list": "List files",
         "cat": "Show EXIF data of file",
-        "keys": "Show which EXIF keys"
+        "keys": "Show which EXIF keys to show",
+        "threads": "Number of threads",
+        "count": "How many unmatch files to stop scan"
       }
     },
     "error": {
@@ -51,14 +53,15 @@
       "executing": "Executing operation...",
       "cancelled": "Cancelled",
       "languageChanged": "Language changed to: {{language}}",
-      "scanningFiles": "Scanning files, processed {{count}} files",
+      "scanningFiles": "Scanning files, processed {{count}} / {{total}} files, {{notMatchedCount}} files datetime not match",
       "fileName": "File Name",
       "datetime": "Datetime",
       "base": "Base",
       "current": "Current",
       "startScanAgain": "Start scan again...",
-      "modifyingFiles": "Modifying files...",
-      "localTimeZone": "Note: Current time zone is {{timeZone}}"
+      "modifyingFiles": "Modifying files: {{count}} / {{total}} ...",
+      "localTimeZone": "Note: Current time zone is {{timeZone}}",
+      "collectingFiles": "Collecting files..."
     },
     "confirm": {
       "continue": "Do you want to continue?",

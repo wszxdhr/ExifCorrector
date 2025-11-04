@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { scan } from '../fileMethods/scan';
 import { getExif } from '../fileMethods/image/getExif';
 import { showExif } from '../utils/showExif';

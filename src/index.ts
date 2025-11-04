@@ -8,6 +8,25 @@ import { unitOfTime } from 'moment-timezone';
 import { listFiles } from './commands/list';
 import { catFiles } from './commands/cat';
 
+const DEFAULT_FILE_NAME_FORMAT = [
+  'YYYYMMDDHHmmss',
+  'YYYY-MM-DD_HHmmss',
+  'YYYY-MM-DD_HH-mm-ss',
+  'YYYYMMDD_HHmmss',
+  'YYYYMMDD_HH-mm-ss',
+  'YYYYMMDD-HHmmss',
+  'YYYYMMDD-HH-mm-ss',
+  'YYYY_MM_DD_HH_mm_ss',
+  'YYYY-MM-DD HH:mm:ss'
+];
+
+const DEFAULT_COMPARE = [
+  'CreateDate',
+  'DateCreated',
+  'FileModifyDate',
+  'DateTimeOriginal'
+]
+
 /**
  * 主命令行程序类
  * 遵循单一职责原则,负责命令行解析和路由
@@ -40,11 +59,16 @@ class ExifDog {
       .option('-b, --compare-base <base>', t('cli.help.options.compareBase'))
       .option('-g, --granularity <granularity>', t('cli.help.options.granularity'), 'second')
       .option('-c, --compare <compare>', t('cli.help.options.compare'), (val: string) => val.split(','))
-      .option('-ff, --file-name-format <fileNameFormat>', t('cli.help.options.fileNameFormat'))
+      .option('-ff, --file-name-format <fileNameFormat>', t('cli.help.options.fileNameFormat'), (val: string) => val ? val.split(',') : DEFAULT_FILE_NAME_FORMAT)
       .option('-r, --recursive', t('cli.help.options.recursive'))
       .option('-y, --yes', t('cli.help.options.yes'))
       .option('-f, --filter <filter>', t('cli.help.options.filter'), '')
-      .action(async (folder: string, options: { compareBase: string, ext: string[], granularity: unitOfTime.StartOf, compare: string[], fileNameFormat: string | undefined, recursive: boolean, yes: boolean, filter: string }) => {
+      .option('--count <count>', t('cli.help.options.count'), 'Infinity')
+      // .option('-t, --threads <threads>', t('cli.help.options.threads'), '1')
+      .action(async (folder: string, options: { compareBase: string, ext: string[], granularity: unitOfTime.StartOf, compare: string[], fileNameFormat: string[], recursive: boolean, yes: boolean, filter: string, threads: string, count: string }) => {
+        options.fileNameFormat = options.fileNameFormat || DEFAULT_FILE_NAME_FORMAT;
+        options.compare = options.compare || DEFAULT_COMPARE;
+        options.compareBase = options.compareBase || 'FileName';
         await processImageDatetime(folder, options);
       })
     this.program

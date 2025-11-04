@@ -1,6 +1,6 @@
 import inquirer from 'inquirer'
 import { devLog } from '../utils/devLog';
-import { scanFolder } from '../fileMethods/scan';
+import { scan } from '../fileMethods/scan';
 import { t } from '../i18n/config';
 import ora from 'ora'
 import path from 'path';
@@ -10,6 +10,7 @@ import { unitOfTime } from 'moment-timezone'
 import { ExifDateTime, Tags } from 'exiftool-vendored';
 import { DateTime } from 'luxon';
 import chalk from 'chalk';
+import fs from 'fs'
 
 // 处理图片日期
 export async function processImageDatetime(filePath: string, options: {
@@ -18,42 +19,46 @@ export async function processImageDatetime(filePath: string, options: {
     granularity: unitOfTime.StartOf,
     // 可能是'YYYYMMDDHHmmss'这种，或者'exif.DateTime'
     compare: string[],
-    fileNameFormat: string | undefined,
+    fileNameFormat: string[],
     recursive?: boolean,
     yes?: boolean,
-    filter?: string
+    filter?: string,
+    threads?: string,
+    count?: string
 }) {
     console.log(chalk.bgRedBright.blueBright(t('cli.info.localTimeZone', { timeZone: localTimeZone })))
     options.compareBase = options.compareBase || 'FileName'
     options.compare = options.compare || ['CreateDate']
     devLog(`option: ${JSON.stringify(options)}`)
     const startTime = Date.now()
-    const spinner = ora(t('cli.info.scanningFiles')).start();
-    let count = 0
-    const filePaths = await scanFolder(filePath, options.filter, options.recursive, (filePath) => {
-        spinner.text = t('cli.info.scanningFiles', { count: ++count }) + `: ${filePath}`
-    });
-    spinner.stop();
-
+    const filePaths = await scan(filePath, options.filter, options.recursive);
+    await new Promise(resolve => setTimeout(resolve, 5000))
     const table: { [key: string]: string }[] = []
     const files: { filePath: string, exif: Object, base: moment.Moment | null, current: moment.Moment | null }[] = []
-    await Promise.all(filePaths.map(async (filePath) => {
+    const fileMatchSpinner = ora(t('cli.info.scanningFiles', { count: 0, total: filePaths.length, notMatchedCount: 0 })).start();
+    let fileMatchCount = 0
+    const countNumber = +(options.count || Infinity)
+    for (const filePath of filePaths) {
+        if (fileMatchCount >= countNumber) {
+            break
+        }
         const basename = path.basename(filePath)
         const exif = await getExif(filePath)
-        const compareDatetime = compareOptionToDatetime(options.compare, exif)
-        const baseDatetime = compareOptionToDatetime([options.compareBase], exif)
-        devLog(filePath, compareDatetime, baseDatetime)
+        const compareDatetime = compareOptionToDatetime(options.compare, exif, options.fileNameFormat)
+        const baseDatetime = compareOptionToDatetime([options.compareBase], exif, options.fileNameFormat)
 
         if (!compareDatetime || !baseDatetime || !compareDatetime.isValid() || !baseDatetime.isValid() || compareDatetime.isSame(baseDatetime, options.granularity || 'second')) {
-            return
-        }
-        table.push({
+        } else {
+            table.push({
             [t('cli.info.fileName')]: basename,
             [t('cli.info.base')]: baseDatetime.clone().tz(localTimeZone).format(displayDatetimeFormat),
             [t('cli.info.current')]: compareDatetime.clone().tz(localTimeZone).format(displayDatetimeFormat)
         })
         files.push({ filePath, exif, base: baseDatetime, current: compareDatetime })
-    }))
+        }
+        fileMatchSpinner.text = t('cli.info.scanningFiles', { count: fileMatchCount++, total: filePaths.length, notMatchedCount: table.length })
+    }
+    fileMatchSpinner.stop();
     console.table(table)
     if (table.length === 0) {
         console.log(t('cli.imageDatetime.noMatchedFiles', { count: filePaths.length }))
@@ -74,8 +79,8 @@ export async function processImageDatetime(filePath: string, options: {
             message: t('cli.confirm.choice'),
             choices: [
                 t('cli.confirm.modifyAll'),
-                t('cli.confirm.ignoreFiles'),
-                t('cli.confirm.ignoreAll'),
+                // t('cli.confirm.ignoreFiles'),
+                // t('cli.confirm.ignoreAll'),
                 t('cli.confirm.scanAgain'),
                 t('cli.confirm.cancel')
             ]
@@ -102,12 +107,14 @@ export async function processImageDatetime(filePath: string, options: {
 }
 
 async function modifyAll(files: { filePath: string, exif: Tags, base: moment.Moment | null, current: moment.Moment | null }[], options: { compare: string[] }) {
-    const spinner = ora(t('cli.info.modifyingFiles')).start();
+    const spinner = ora(t('cli.info.modifyingFiles', { count: 0, total: files.length })).start();
+    let count = 0
     await Promise.all(files.map(async ({ filePath, exif, base, current }) => {
         if (base && current) {
             for (const compare of options.compare) {
                 spinner.text = t('cli.info.processing', { file: filePath }) + `: ${compare}`
                 await modifyDatetime(filePath, exif, base, compare)
+                spinner.text = t('cli.info.modifyingFiles', { count: count++, total: files.length })
             }
         }
     }))

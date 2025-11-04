@@ -25,8 +25,10 @@
         "yes": "是否直接无需确认执行全部修改",
         "filter": "文件过滤字符串",
         "list": "列出所有文件",
+        "threads": "线程数",
         "cat": "显示文件的EXIF数据",
-        "keys": "显示哪些EXIF键"
+        "keys": "显示哪些EXIF键要显示",
+        "count": "出现多少个未匹配文件时直接停止扫描"
       }
     },
     "error": {
@@ -51,14 +53,15 @@
       "executing": "执行操作...",
       "cancelled": "已取消",
       "languageChanged": "语言已切换为: {{language}}",
-      "scanningFiles": "正在扫描文件，已扫描 {{count}} 个文件",
+      "scanningFiles": "正在扫描文件，已扫描 {{count}} / {{total}} 个文件，{{notMatchedCount}} 个文件日期时间不匹配",
       "fileName": "文件名",
       "datetime": "日期时间",
       "base": "基准",
       "current": "当前",
       "startScanAgain": "开始重新扫描...",
-      "modifyingFiles": "正在修改文件...",
-      "localTimeZone": "请注意当前时区：{{timeZone}}"
+      "modifyingFiles": "正在修改文件： {{count}} / {{total}} ...",
+      "localTimeZone": "请注意当前时区：{{timeZone}}",
+      "collectingFiles": "统计文件中..."
     },
     "confirm": {
       "continue": "是否继续？",
