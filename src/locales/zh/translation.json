@@ -18,8 +18,8 @@
         "language": "设置语言 (en|zh)",
         "ext": "指定文件扩展名 (逗号分隔)",
         "granularity": "指定时间粒度 (second|minute|hour|day|month|year)",
-        "compareBase": "时间值比较的基准，具体可用值请使用exif-dog view命令查看",
-        "compare": "用来比较的时间值，具体可用值请使用exif-dog view命令查看",
+        "compareBase": "时间值比较的基准，具体可用值请使用exif-dog cat命令查看",
+        "compare": "用来比较的时间值，具体可用值请使用exif-dog cat命令查看",
         "fileNameFormat": "当compareBase=FileName时使用，用来读取文件名上带的时间，格式参考moment.js",
         "recursive": "是否递归查询文件",
         "yes": "是否直接无需确认执行全部修改",
@@ -28,7 +28,11 @@
         "threads": "线程数",
         "cat": "显示文件的EXIF数据",
         "keys": "显示哪些EXIF键要显示",
-        "count": "出现多少个未匹配文件时直接停止扫描"
+        "count": "出现多少个未匹配文件时直接停止扫描",
+        "dirnameIgnored": "忽略目录文件夹名",
+        "onlyIncludeDir": "仅包含目录文件夹名",
+        "unmatchLimit": "最多处理多少个日期时间不匹配的文件",
+        "fileLimit": "最多处理多少个文件"
       }
     },
     "error": {
@@ -61,7 +65,11 @@
       "startScanAgain": "开始重新扫描...",
       "modifyingFiles": "正在修改文件： {{count}} / {{total}} ...",
       "localTimeZone": "请注意当前时区：{{timeZone}}",
-      "collectingFiles": "统计文件中..."
+      "collectingFiles": "统计文件中...",
+      "fileLimit": "请注意：当前已设置 - 最多处理 {{limit}} 个文件",
+      "unmatchLimit": "请注意：当前已设置 - 最多处理 {{limit}} 个日期时间不匹配的文件",
+      "dirnameIgnored": "请注意：当前已设置 - 忽略目录文件夹名 {{dirnameIgnored}}",
+      "onlyIncludeDir": "请注意：当前已设置 - 仅包含目录文件夹名 {{onlyIncludeDir}}"
     },
     "confirm": {
       "continue": "是否继续？",

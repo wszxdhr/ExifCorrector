@@ -24,9 +24,24 @@ export async function processImageDatetime(filePath: string, options: {
     yes?: boolean,
     filter?: string,
     threads?: string,
-    count?: string
+    fileLimit: number,
+    unmatchLimit: number,
+    dirnameIgnored?: string[],
+    onlyIncludeDir?: string[]
 }) {
     console.log(chalk.bgRedBright.blueBright(t('cli.info.localTimeZone', { timeZone: localTimeZone })))
+    if (options.fileLimit !== Infinity) {
+        console.log(chalk.bgRedBright.blueBright(t('cli.info.fileLimit', { limit: options.fileLimit })))
+    }
+    if (options.unmatchLimit !== Infinity) {
+        console.log(chalk.bgRedBright.blueBright(t('cli.info.unmatchLimit', { limit: options.unmatchLimit })))
+    }
+    if (options.dirnameIgnored?.length) {
+        console.log(chalk.bgRedBright.blueBright(t('cli.info.dirnameIgnored', { dirnameIgnored: options.dirnameIgnored.join(',') })))
+    }
+    if (options.onlyIncludeDir?.length) {
+        console.log(chalk.bgRedBright.blueBright(t('cli.info.onlyIncludeDir', { onlyIncludeDir: options.onlyIncludeDir.join(',') })))
+    }
     options.compareBase = options.compareBase || 'FileName'
     options.compare = options.compare || ['CreateDate']
     devLog(`option: ${JSON.stringify(options)}`)
@@ -36,11 +51,11 @@ export async function processImageDatetime(filePath: string, options: {
     const table: { [key: string]: string }[] = []
     const files: { filePath: string, exif: Object, base: moment.Moment | null, current: moment.Moment | null }[] = []
     const fileMatchSpinner = ora(t('cli.info.scanningFiles', { count: 0, total: filePaths.length, notMatchedCount: 0 })).start();
-    let fileMatchCount = 0
-    const countNumber = +(options.count || Infinity)
+    let fileCount = 0
     for (const filePath of filePaths) {
-        if (fileMatchCount >= countNumber) {
-            break
+        const dirnames = path.dirname(filePath).split(path.sep)
+        if (dirnames.some(dir => options.dirnameIgnored?.includes(dir)) || (options.onlyIncludeDir?.length && !dirnames.some(dir => options.onlyIncludeDir?.includes(dir)))) {
+            continue
         }
         const basename = path.basename(filePath)
         const exif = await getExif(filePath)
@@ -50,13 +65,16 @@ export async function processImageDatetime(filePath: string, options: {
         if (!compareDatetime || !baseDatetime || !compareDatetime.isValid() || !baseDatetime.isValid() || compareDatetime.isSame(baseDatetime, options.granularity || 'second')) {
         } else {
             table.push({
-            [t('cli.info.fileName')]: basename,
-            [t('cli.info.base')]: baseDatetime.clone().tz(localTimeZone).format(displayDatetimeFormat),
-            [t('cli.info.current')]: compareDatetime.clone().tz(localTimeZone).format(displayDatetimeFormat)
-        })
-        files.push({ filePath, exif, base: baseDatetime, current: compareDatetime })
+                [t('cli.info.fileName')]: basename,
+                [t('cli.info.base')]: baseDatetime.clone().tz(localTimeZone).format(displayDatetimeFormat),
+                [t('cli.info.current')]: compareDatetime.clone().tz(localTimeZone).format(displayDatetimeFormat)
+            })
+            files.push({ filePath, exif, base: baseDatetime, current: compareDatetime })
         }
-        fileMatchSpinner.text = t('cli.info.scanningFiles', { count: fileMatchCount++, total: filePaths.length, notMatchedCount: table.length })
+        fileMatchSpinner.text = t('cli.info.scanningFiles', { count: fileCount++, total: filePaths.length, notMatchedCount: table.length })
+        if (table.length >= options.unmatchLimit || fileCount >= options.fileLimit) {
+            break
+        }
     }
     fileMatchSpinner.stop();
     console.table(table)

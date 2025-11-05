@@ -18,8 +18,8 @@
         "language": "Set language (en|zh)",
         "ext": "Specify file extensions (comma-separated)",
         "granularity": "Specify datetime granularity (second|minute|hour|day|month|year)",
-        "compareBase": "Datetime value comparison base, please use exif-dog view command to view available values",
-        "compare": "Datetime value to compare, please use exif-dog view command to view available values",
+        "compareBase": "Datetime value comparison base, please use exif-dog cat command to view available values",
+        "compare": "Datetime value to compare, please use exif-dog cat command to view available values",
         "fileNameFormat": "When compareBase=FileName, use this format to read datetime from filename, please refer to moment.js",
         "recursive": "Recursively query files",
         "yes": "Directly execute all modifications without confirmation",
@@ -28,7 +28,11 @@
         "cat": "Show EXIF data of file",
         "keys": "Show which EXIF keys to show",
         "threads": "Number of threads",
-        "count": "How many unmatch files to stop scan"
+        "count": "How many unmatch files to stop scan",
+        "dirnameIgnored": "Ignored directory folder names",
+        "onlyIncludeDir": "Only include directory folder names",
+        "unmatchLimit": "Unmatch limit",
+        "fileLimit": "File limit"
       }
     },
     "error": {
@@ -61,7 +65,11 @@
       "startScanAgain": "Start scan again...",
       "modifyingFiles": "Modifying files: {{count}} / {{total}} ...",
       "localTimeZone": "Note: Current time zone is {{timeZone}}",
-      "collectingFiles": "Collecting files..."
+      "collectingFiles": "Collecting files...",
+      "fileLimit": "Note: Current file limit is {{limit}}",
+      "unmatchLimit": "Note: Current unmatch limit is {{limit}}",
+      "dirnameIgnored": "Note: Current ignored directory folder names are {{dirnameIgnored}}",
+      "onlyIncludeDir": "Note: Current only include directory folder names are {{onlyIncludeDir}}"
     },
     "confirm": {
       "continue": "Do you want to continue?",

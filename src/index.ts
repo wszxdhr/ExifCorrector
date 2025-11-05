@@ -63,13 +63,31 @@ class ExifDog {
       .option('-r, --recursive', t('cli.help.options.recursive'))
       .option('-y, --yes', t('cli.help.options.yes'))
       .option('-f, --filter <filter>', t('cli.help.options.filter'), '')
-      .option('--count <count>', t('cli.help.options.count'), 'Infinity')
+      .option('--unmatch-limit <unmatchLimit>', t('cli.help.options.unmatchLimit'), 'Infinity')
+      .option('--file-limit <fileLimit>', t('cli.help.options.fileLimit'), 'Infinity')
+      .option('--dirname-ignored <dirnameIgnored>', t('cli.help.options.dirnameIgnored'), (val: string) => val.split(','))
+      .option('--only-include-dir <onlyIncludeDir>', t('cli.help.options.onlyIncludeDir'), (val: string) => val.split(','))
       // .option('-t, --threads <threads>', t('cli.help.options.threads'), '1')
-      .action(async (folder: string, options: { compareBase: string, ext: string[], granularity: unitOfTime.StartOf, compare: string[], fileNameFormat: string[], recursive: boolean, yes: boolean, filter: string, threads: string, count: string }) => {
-        options.fileNameFormat = options.fileNameFormat || DEFAULT_FILE_NAME_FORMAT;
-        options.compare = options.compare || DEFAULT_COMPARE;
-        options.compareBase = options.compareBase || 'FileName';
-        await processImageDatetime(folder, options);
+      .action(async (folder: string, options: {
+        compareBase: string,
+        ext: string[],
+        granularity: unitOfTime.StartOf,
+        compare: string[],
+        fileNameFormat: string[],
+        recursive: boolean,
+        yes: boolean,
+        filter: string,
+        threads: string,
+        unmatchLimit: string,
+        fileLimit: string,
+        dirnameIgnored?: string[],
+        onlyIncludeDir?: string[]
+      }) => {
+        const newOption = { ...options };
+        newOption.fileNameFormat = newOption.fileNameFormat || DEFAULT_FILE_NAME_FORMAT;
+        newOption.compare = newOption.compare || DEFAULT_COMPARE;
+        newOption.compareBase = newOption.compareBase || 'FileName';
+        await processImageDatetime(folder, { ...newOption, unmatchLimit: Number(newOption.unmatchLimit) || Infinity, fileLimit: Number(newOption.fileLimit) || Infinity });
       })
     this.program
       .command('list <folder>')
