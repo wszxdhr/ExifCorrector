@@ -28,7 +28,8 @@ export function compareOptionToDatetime(compareOptions: string[], exif: Tags, fi
         devError('获取失败，文件名格式错误', fileNameFormat, fileName)
         return null
     }
-    const value = parseDate(dateTimeKey === 'FileName' && dateTimeFromFileName.isValid() ? dateTimeFromFileName.format(displayDatetimeFormat) : exif[dateTimeKey as keyof Tags]?.toString() || '')
+		const dateTimeFromExif = exif[dateTimeKey as keyof Tags]
+    const value = parseDate(dateTimeKey === 'FileName' && dateTimeFromFileName.isValid() ? dateTimeFromFileName.format(displayDatetimeFormat) : dateTimeFromExif instanceof ExifDateTime ? (dateTimeFromExif.toDateTime()?.toJSDate().toString() || '') : '')
     if (!value) {
         devError('获取失败，Exif值为空或格式为空 ', 'compareOptions: ', compareOptions, 'value: ', value, 'dateTimeFromFileName: ', dateTimeFromFileName)
         return null
