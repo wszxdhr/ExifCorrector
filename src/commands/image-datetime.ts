@@ -151,7 +151,7 @@ async function modifyDatetime(filePath: string, exif: Tags, datetime: moment.Mom
         const compareDatetime = compareItem.toDateTime()
         if (compareDatetime) {
             await setExif(filePath, {
-                [compare]: ExifDateTime.fromDateTime(newCompareDatetime)?.setZone('utc')
+                [compare]: ExifDateTime.fromDateTime(newCompareDatetime)?.setZone(compareDatetime.zone)
             })
         }
     } else if (typeof compareItem === 'string') {
